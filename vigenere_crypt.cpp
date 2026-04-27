@@ -5,10 +5,9 @@ VigenereCrypt::VigenereCrypt(QObject *parent)
     : QObject{parent}
 {}
 
-void VigenereCrypt::encrypt(const QString &text, const QString &key)
+void VigenereCrypt::baseCrypt(const QString &text, const QString &key, CryptAction action)
 {
     QString result = "";
-    int length = _alphabet.length();
 
     for (int i = 0; i < text.length(); ++i)
     {
@@ -21,34 +20,30 @@ void VigenereCrypt::encrypt(const QString &text, const QString &key)
         }
         else
         {
-            int encryptedIdx = (textPos + keyPos) % length;
-            result += _alphabet[encryptedIdx];
+            int index = 0;
+
+            if (action == VigenereCrypt::ENCRYPTION)
+            {
+                index = (textPos + keyPos) % length;
+            }
+            if (action == VigenereCrypt::DECRYPTION)
+            {
+                 index = (textPos - keyPos + length) % length;
+            }
+
+            result += _alphabet[index];
         }
     }
 
     emit cryptFinished(result);
 }
 
+void VigenereCrypt::encrypt(const QString &text, const QString &key)
+{
+    baseCrypt(text, key, VigenereCrypt::ENCRYPTION);
+}
+
 void VigenereCrypt::decrypt(const QString &text, const QString &key)
 {
-    QString result = "";
-    int length = _alphabet.length();
-
-    for (int i = 0; i < text.length(); ++i)
-    {
-        int textPos = _alphabet.indexOf(text[i]);
-        int keyPos = _alphabet.indexOf(key[i % key.length()]);
-
-        if (textPos == -1 || keyPos == -1)
-        {
-            result += text[i];
-        }
-        else
-        {
-            int decryptedIdx = (textPos - keyPos + length) % length;
-            result += _alphabet[decryptedIdx];
-        }
-    }
-
-    emit cryptFinished(result);
+    baseCrypt(text, key, VigenereCrypt::DECRYPTION);
 }

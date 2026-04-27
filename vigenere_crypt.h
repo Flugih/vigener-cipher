@@ -12,6 +12,17 @@ public:
 
 private:
     QString _alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,!?;:()\"'—–-";
+    int length = _alphabet.length();
+
+    enum CryptAction
+    {
+        ENCRYPTION = 0,
+        DECRYPTION
+    };
+
+    void baseCrypt(const QString& text,
+                   const QString& key,
+                   CryptAction action);
 
 signals:
     void cryptFinished(const QString& result);
